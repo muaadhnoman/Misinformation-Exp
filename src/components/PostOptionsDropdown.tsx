@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Plus, Minus, Bookmark, Bell, X, Clock, UserX, AlertTriangle, Shield } from 'lucide-react';
 
 interface PostOptionsDropdownProps {
@@ -14,6 +14,24 @@ const PostOptionsDropdown: React.FC<PostOptionsDropdownProps> = ({
   onReportPost,
   profileName
 }) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const options = [
@@ -78,7 +96,7 @@ const PostOptionsDropdown: React.FC<PostOptionsDropdownProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-sm w-full shadow-xl">
+      <div ref={dropdownRef} className="bg-white rounded-lg max-w-sm w-full shadow-xl">
         <div className="p-1">
           {options.map((option, index) => {
             const Icon = option.icon;
