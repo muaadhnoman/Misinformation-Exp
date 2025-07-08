@@ -5,6 +5,10 @@ import DisputeModal from './DisputeModal';
 import ViewDisputesModal from './ViewDisputesModal';
 import EyeGauge from './EyeGauge';
 import DisputeGauge from './DisputeGauge';
+import PostOptionsDropdown from './PostOptionsDropdown';
+import ReportModal from './ReportModal';
+import ScamReportModal from './ScamReportModal';
+import ReportSuccessModal from './ReportSuccessModal';
 
 interface PostProps {
   initialLikes?: number;
@@ -35,6 +39,10 @@ const Post: React.FC<PostProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDisputeModalOpen, setIsDisputeModalOpen] = useState(false);
   const [isViewDisputesModalOpen, setIsViewDisputesModalOpen] = useState(false);
+  const [isOptionsDropdownOpen, setIsOptionsDropdownOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isScamReportModalOpen, setIsScamReportModalOpen] = useState(false);
+  const [isReportSuccessModalOpen, setIsReportSuccessModalOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<Array<{ id: number; text: string; author: string; time: string; initial: string }>>([]);
   const [settings, setSettings] = useState({
@@ -138,7 +146,10 @@ const Post: React.FC<PostProps> = ({
             >
               <Edit3 className="w-4 h-4 text-white" />
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <button 
+              onClick={() => setIsOptionsDropdownOpen(true)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
               <MoreHorizontal className="w-4 h-4 text-gray-500" />
             </button>
           </div>
@@ -369,6 +380,41 @@ const Post: React.FC<PostProps> = ({
         onClose={() => setIsViewDisputesModalOpen(false)}
         disputeCount={disputeCount}
         setDisputeCount={setDisputeCount}
+      />
+
+      <PostOptionsDropdown
+        isOpen={isOptionsDropdownOpen}
+        onClose={() => setIsOptionsDropdownOpen(false)}
+        onReportPost={() => setIsReportModalOpen(true)}
+        profileName={profileName}
+      />
+
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onSelectScamFraud={() => {
+          setIsReportModalOpen(false);
+          setIsScamReportModalOpen(true);
+        }}
+      />
+
+      <ScamReportModal
+        isOpen={isScamReportModalOpen}
+        onClose={() => setIsScamReportModalOpen(false)}
+        onBack={() => {
+          setIsScamReportModalOpen(false);
+          setIsReportModalOpen(true);
+        }}
+        onSelectFalseInformation={() => {
+          setIsScamReportModalOpen(false);
+          setIsReportSuccessModalOpen(true);
+        }}
+      />
+
+      <ReportSuccessModal
+        isOpen={isReportSuccessModalOpen}
+        onClose={() => setIsReportSuccessModalOpen(false)}
+        profileName={profileName}
       />
     </div>
   );
