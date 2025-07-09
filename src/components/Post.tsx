@@ -265,7 +265,7 @@ const Post: React.FC<PostProps> = ({
           </button>
           {settings.showDisputeButton && (
             <button 
-              onClick={() => setIsDisputeModalOpen(true)}
+              onClick={() => setIsViewDisputesModalOpen(true)}
               className="flex items-center justify-center py-2 px-4 rounded-md hover:bg-gray-50 transition-colors text-gray-600 text-sm font-medium flex-1 mx-1"
             >
               <AlertTriangle className="w-4 h-4 mr-2 text-yellow-500" />
@@ -278,7 +278,7 @@ const Post: React.FC<PostProps> = ({
         {settings.showDisputeFeature && (
           <div className="px-4 py-2 border-b border-gray-100">
             <button 
-              onClick={handleDispute}
+              onClick={() => setIsViewDisputesModalOpen(true)}
               disabled={hasDisputed}
               className={`w-full flex items-center justify-center py-2 px-4 rounded-md border transition-colors text-sm font-medium ${
                 hasDisputed 

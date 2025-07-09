@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Globe, User, Shield } from 'lucide-react';
+import { X, Globe, User, Shield, ChevronDown } from 'lucide-react';
 
 interface Dispute {
   id: number;
@@ -26,47 +26,40 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
   const [filter, setFilter] = useState<'all' | 'public' | 'private' | 'platform'>('all');
   const [selectedVisibility, setSelectedVisibility] = useState<'public' | 'private' | 'platform'>('public');
   const [newReason, setNewReason] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [disputes, setDisputes] = useState<Dispute[]>([
     {
       id: 1,
-      name: 'Alex Johnson',
-      initial: 'A',
+      name: 'Noah Rodriguez',
+      initial: 'N',
       visibility: 'public',
-      reason: 'This information is misleading',
-      time: '2 hours ago'
+      reason: 'This post contains misinformation',
+      time: '1 day ago'
     },
     {
       id: 2,
-      name: 'Sarah Williams',
-      initial: 'S',
-      visibility: 'public',
-      reason: 'Contains factual errors',
-      time: '1 hour ago'
+      name: 'Anonymous User',
+      initial: 'A',
+      visibility: 'private',
+      reason: 'I believe this is false',
+      time: '2 days ago'
     },
     {
       id: 3,
-      name: 'Michael Brown',
+      name: 'Moderator Review',
       initial: 'M',
-      visibility: 'private',
-      reason: 'I disagree with this content',
-      time: '45 minutes ago'
+      visibility: 'platform',
+      reason: 'This needs to be reviewed',
+      time: '3 days ago'
     },
     {
       id: 4,
-      name: 'Emma Davis',
-      initial: 'E',
-      visibility: 'platform',
-      reason: 'Potentially harmful content',
-      time: '30 minutes ago'
-    },
-    {
-      id: 5,
-      name: 'James Wilson',
-      initial: 'J',
+      name: 'Charlotte Perez',
+      initial: 'C',
       visibility: 'public',
-      reason: 'This is not accurate',
-      time: '20 minutes ago'
+      reason: 'I disagree with this content',
+      time: '4 days ago'
     }
   ]);
 
@@ -74,8 +67,8 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
     if (newReason.trim()) {
       const newDispute: Dispute = {
         id: Date.now(),
-        name: 'Muaadh (You)',
-        initial: 'M',
+        name: 'You',
+        initial: 'Y',
         visibility: selectedVisibility,
         reason: newReason,
         time: 'Just now'
@@ -88,44 +81,55 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
 
   const filteredDisputes = filter === 'all' ? disputes : disputes.filter(d => d.visibility === filter);
 
-  const renderDispute = (dispute: Dispute) => {
-    const isCurrentUser = dispute.name === 'Muaadh (You)';
-    const shouldBlur = dispute.visibility !== 'public' && !isCurrentUser;
+  const visibilityOptions = [
+    { key: 'public' as const, icon: Globe, label: 'Public' },
+    { key: 'private' as const, icon: User, label: 'Private' },
+    { key: 'platform' as const, icon: Shield, label: 'Platform' }
+  ];
 
-    const visibilityConfig = {
-      public: { icon: Globe, color: 'green', label: 'Public' },
-      private: { icon: User, color: 'blue', label: 'Private' },
-      platform: { icon: Shield, color: 'purple', label: 'Platform' }
+  const selectedOption = visibilityOptions.find(opt => opt.key === selectedVisibility);
+
+  const renderDispute = (dispute: Dispute) => {
+    const isCurrentUser = dispute.name === 'You';
+    const shouldBlur = dispute.visibility !== 'public' && !isCurrentUser;
+    
+    const getVisibilityDisplay = () => {
+      switch (dispute.visibility) {
+        case 'public':
+          return <span className="inline-flex items-center text-green-600 text-sm"><Globe className="w-4 h-4 mr-1" />Public</span>;
+        case 'private':
+          return <span className="inline-flex items-center text-blue-600 text-sm"><User className="w-4 h-4 mr-1" />Private</span>;
+        case 'platform':
+          return <span className="inline-flex items-center text-purple-600 text-sm"><Shield className="w-4 h-4 mr-1" />Platform</span>;
+      }
     };
 
-    const config = visibilityConfig[dispute.visibility];
-    const Icon = config.icon;
+    const getDisplayName = () => {
+      if (dispute.visibility === 'private' && !isCurrentUser) {
+        return '(Anonymous to others)';
+      }
+      if (dispute.visibility === 'platform' && !isCurrentUser) {
+        return '(Visible to moderators)';
+      }
+      return dispute.name;
+    };
 
     return (
-      <div key={dispute.id} className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-        <div className="flex items-start space-x-3">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
-            shouldBlur ? 'bg-gray-500 blur-sm' : 'bg-blue-500'
-          }`}>
-            {shouldBlur ? '?' : dispute.initial}
+      <div key={dispute.id} className="flex items-start space-x-3 py-3">
+        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-lg ${
+          shouldBlur ? 'bg-gray-400 blur-sm' : 'bg-blue-500'
+        }`}>
+          {shouldBlur ? '?' : dispute.initial}
+        </div>
+        <div className="flex-grow">
+          <div className="flex items-center space-x-2 mb-1">
+            <span className={`font-medium text-gray-900 ${shouldBlur ? 'blur-sm' : ''}`}>
+              {getDisplayName()}
+            </span>
+            {getVisibilityDisplay()}
           </div>
-          <div className="flex-grow">
-            <div className="flex items-center space-x-2 mb-1">
-              <span className={`font-medium text-sm ${shouldBlur ? 'blur-sm' : ''}`}>
-                {dispute.name}
-              </span>
-              <span className={`text-xs px-2 py-1 rounded-full ${
-                config.color === 'green' ? 'bg-green-100 text-green-600' :
-                config.color === 'blue' ? 'bg-blue-100 text-blue-600' :
-                'bg-purple-100 text-purple-600'
-              }`}>
-                <Icon className="w-3 h-3 inline mr-1" />
-                {config.label}
-              </span>
-            </div>
-            <p className="text-sm text-gray-600 mb-1">{dispute.reason}</p>
-            <div className="text-xs text-gray-500">{dispute.time}</div>
-          </div>
+          <p className="text-gray-700 mb-1">{dispute.reason}</p>
+          <div className="text-sm text-gray-500">{dispute.time}</div>
         </div>
       </div>
     );
@@ -136,59 +140,88 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
         <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">View Disputes</h3>
+          <div></div>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Quick Dispute Form */}
-        <div className="p-4 bg-red-50 border-b border-red-200">
-          <h4 className="text-sm font-medium text-red-700 mb-2">Submit your dispute:</h4>
+        {/* Submit Dispute Form */}
+        <div className="p-4 bg-red-50">
+          <h3 className="text-red-600 font-medium mb-3">Submit your dispute:</h3>
           <textarea
             value={newReason}
             onChange={(e) => setNewReason(e.target.value)}
-            rows={2}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-2"
+            rows={3}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-3 resize-none"
             placeholder="Explain why you're disputing this post..."
           />
-          <div className="text-xs text-gray-600 mb-2">
-            Choose visibility of your identity:
+          
+          <div className="text-sm text-gray-700 mb-2">
+            Choose visibility of your identity (your name & profile picture):
           </div>
-          <div className="flex items-center justify-between">
-            <select
-              value={selectedVisibility}
-              onChange={(e) => setSelectedVisibility(e.target.value as 'public' | 'private' | 'platform')}
-              className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 mr-2"
-            >
-              <option value="public">🌐 Public</option>
-              <option value="private">👤 Private</option>
-              <option value="platform">🛡️ Platform</option>
-            </select>
+          
+          <div className="flex items-center space-x-3">
+            <div className="relative flex-1">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="w-full flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
+              >
+                <div className="flex items-center">
+                  {selectedOption && <selectedOption.icon className="w-4 h-4 mr-2 text-blue-500" />}
+                  <span>{selectedOption?.label}</span>
+                </div>
+                <ChevronDown className="w-4 h-4 text-gray-500" />
+              </button>
+              
+              {isDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg z-10 mt-1">
+                  {visibilityOptions.map((option) => {
+                    const Icon = option.icon;
+                    return (
+                      <button
+                        key={option.key}
+                        onClick={() => {
+                          setSelectedVisibility(option.key);
+                          setIsDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center px-3 py-2 text-sm hover:bg-gray-50 text-left"
+                      >
+                        <Icon className="w-4 h-4 mr-2 text-blue-500" />
+                        {option.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            
             <button
               onClick={handleSubmitDispute}
-              className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm"
+              className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm font-medium"
             >
               Submit Dispute
             </button>
           </div>
         </div>
 
+        {/* Disputes List */}
         <div className="p-4">
-          <div className="flex justify-between items-center mb-4">
-            <div className="text-sm text-gray-600">
-              {filteredDisputes.length} dispute{filteredDisputes.length !== 1 ? 's' : ''}
-            </div>
-            <div className="flex space-x-2">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-gray-700 font-medium">
+              {disputeCount} users have disputed this post
+            </span>
+            <div className="flex space-x-1">
               {(['all', 'public', 'private', 'platform'] as const).map((filterType) => (
                 <button
                   key={filterType}
                   onClick={() => setFilter(filterType)}
-                  className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                     filter === filterType
-                      ? 'bg-gray-200 text-gray-900'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-gray-800 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
                   {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
@@ -197,7 +230,7 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
             </div>
           </div>
 
-          <div className="space-y-3 max-h-80 overflow-y-auto">
+          <div className="space-y-0 max-h-80 overflow-y-auto border-t border-gray-200">
             {filteredDisputes.length > 0 ? (
               filteredDisputes.map(renderDispute)
             ) : (
@@ -207,22 +240,25 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
             )}
           </div>
 
+          {/* Privacy Notice */}
           <div className="mt-4 pt-4 border-t border-gray-200">
-            <div className="text-xs text-gray-500 mb-4 flex items-start">
-              <svg className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-              Names and profile pictures are blurred for private and platform-level disputes to protect user privacy.
-            </div>
-            <div className="text-center">
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
-              >
-                Close
-              </button>
+            <div className="flex items-start text-xs text-gray-500">
+              <div className="w-5 h-5 bg-gray-500 rounded-full flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+                <span className="text-white font-bold text-xs">i</span>
+              </div>
+              <span>Names and profile pictures are blurred for private and platform-level disputes to protect user privacy.</span>
             </div>
           </div>
+        </div>
+
+        {/* Close Button */}
+        <div className="p-4 border-t border-gray-200 text-center">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
