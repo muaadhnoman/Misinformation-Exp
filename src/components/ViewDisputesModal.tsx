@@ -98,9 +98,9 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
         case 'public':
           return <span className="inline-flex items-center text-green-600 text-sm"><Globe className="w-4 h-4 mr-1" />Public</span>;
         case 'private':
-          return <span className="inline-flex items-center text-blue-600 text-sm"><User className="w-4 h-4 mr-1" />Private</span>;
+          return <span className="inline-flex items-center text-blue-600 text-sm"><User className="w-4 h-4 mr-1 fill-current" />Private</span>;
         case 'platform':
-          return <span className="inline-flex items-center text-purple-600 text-sm"><Shield className="w-4 h-4 mr-1" />Platform</span>;
+          return <span className="inline-flex items-center text-purple-600 text-sm"><Shield className="w-4 h-4 mr-1 fill-current" />Platform</span>;
       }
     };
 
@@ -170,7 +170,7 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
                 className="w-full flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
               >
                 <div className="flex items-center">
-                  {selectedOption && <selectedOption.icon className="w-4 h-4 mr-2 text-blue-500" />}
+                  {selectedOption && <selectedOption.icon className={`w-4 h-4 mr-2 text-blue-500 ${selectedOption.key === 'private' || selectedOption.key === 'platform' ? 'fill-current' : ''}`} />}
                   <span>{selectedOption?.label}</span>
                 </div>
                 <ChevronDown className="w-4 h-4 text-gray-500" />
@@ -189,7 +189,7 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
                         }}
                         className="w-full flex items-center px-3 py-2 text-sm hover:bg-gray-50 text-left"
                       >
-                        <Icon className="w-4 h-4 mr-2 text-blue-500" />
+                        <Icon className={`w-4 h-4 mr-2 text-blue-500 ${option.key === 'private' || option.key === 'platform' ? 'fill-current' : ''}`} />
                         <div>
                           <div className="font-medium text-gray-900">{option.label}</div>
                           <div className="text-xs text-gray-500">{option.description}</div>
