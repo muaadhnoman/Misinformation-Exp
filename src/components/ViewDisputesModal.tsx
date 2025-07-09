@@ -210,8 +210,8 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
         {/* Disputes List */}
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-gray-700 font-medium">
-              {disputeCount} users have disputed this post
+            <span className="text-gray-700 font-bold">
+              Post's disputes
             </span>
             <div className="flex space-x-1">
               {(['all', 'public', 'private', 'platform'] as const).map((filterType) => (
