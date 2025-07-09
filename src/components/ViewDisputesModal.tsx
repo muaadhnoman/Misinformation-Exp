@@ -82,9 +82,9 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
   const filteredDisputes = filter === 'all' ? disputes : disputes.filter(d => d.visibility === filter);
 
   const visibilityOptions = [
-    { key: 'public' as const, icon: Globe, label: 'Public' },
-    { key: 'private' as const, icon: User, label: 'Private' },
-    { key: 'platform' as const, icon: Shield, label: 'Platform' }
+    { key: 'public' as const, icon: Globe, label: 'Public', description: 'Visible to all users' },
+    { key: 'private' as const, icon: User, label: 'Private', description: 'Visible Only to post creator' },
+    { key: 'platform' as const, icon: Shield, label: 'Platform', description: 'Visible only to platform moderators' }
   ];
 
   const selectedOption = visibilityOptions.find(opt => opt.key === selectedVisibility);
@@ -190,7 +190,10 @@ const ViewDisputesModal: React.FC<ViewDisputesModalProps> = ({
                         className="w-full flex items-center px-3 py-2 text-sm hover:bg-gray-50 text-left"
                       >
                         <Icon className="w-4 h-4 mr-2 text-blue-500" />
-                        {option.label}
+                        <div>
+                          <div className="font-medium text-gray-900">{option.label}</div>
+                          <div className="text-xs text-gray-500">{option.description}</div>
+                        </div>
                       </button>
                     );
                   })}
