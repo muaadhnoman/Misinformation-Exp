@@ -44,7 +44,7 @@ const EyeGauge: React.FC<EyeGaugeProps> = ({ viewCount, disputeCount }) => {
           
           {/* Pupil with view count */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[20px] h-[20px] bg-white rounded-full flex items-center justify-center shadow-sm z-20">
-            <span className="text-xs font-medium text-gray-600">{viewCount}</span>
+            <span className="text-xs text-gray-500">{viewCount}</span>
           </div>
           
           {/* Tooltip */}
@@ -57,7 +57,7 @@ const EyeGauge: React.FC<EyeGaugeProps> = ({ viewCount, disputeCount }) => {
           <span className="text-gray-600">views</span>
           <div className="flex items-center space-x-1 text-sm border-l border-gray-300 pl-2">
             <div className="w-2 h-2 bg-yellow-400 rounded-sm" />
-            <span className="text-gray-600">{disputePercentage}% reported</span>
+            <span className="text-xs text-gray-500">{disputePercentage}% reported</span>
           </div>
         </div>
       </div>
