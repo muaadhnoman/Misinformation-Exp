@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ThumbsUp, MessageCircle, Share2, AlertTriangle, Edit3, MoreHorizontal, Globe, User, Shield, Camera, Upload, X, Check, Eye, ChevronDown } from 'lucide-react';
+import { ThumbsUp, MessageCircle, Share2, AlertTriangle, Edit3, MoreHorizontal, Globe, User, Shield, Camera, Upload, X, Check, Eye, ChevronDown, Info } from 'lucide-react';
 import EditPostModal from './EditPostModal';
 import DisputeModal from './DisputeModal';
 import ViewDisputesModal from './ViewDisputesModal';
@@ -454,6 +454,8 @@ const Post: React.FC<PostProps> = ({
         isOpen={isDisputeModalOpen}
         onClose={() => setIsDisputeModalOpen(false)}
         onDispute={handleDispute}
+        disputeCount={disputeCount}
+        setDisputeCount={setDisputeCount}
       />
 
       <ViewDisputesModal

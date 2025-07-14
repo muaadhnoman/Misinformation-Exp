@@ -16,7 +16,7 @@ const DisputeGauge: React.FC<DisputeGaugeProps> = ({ disputeCount, viewCount, on
         <div className="absolute inset-0 bg-gray-200 rounded-full" />
         <div className="absolute inset-0 rounded-full overflow-hidden">
           <div 
-            className="absolute top-0 left-1/2 w-1/2 h-full bg-red-500 origin-left transform transition-transform duration-500"
+            className="absolute top-0 left-1/2 w-1/2 h-full bg-yellow-400 origin-left transform transition-transform duration-500"
             style={{ 
               transform: `rotate(${percentage * 3.6}deg)`,
               transformOrigin: 'left center'

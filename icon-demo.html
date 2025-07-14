@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dispute Icon Demo</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f9fafb; }
+        .icon-grid { display: grid; gap: 15px; max-width: 600px; }
+        .icon-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .icon-item.current { background: #fef3c7; border-color: #f59e0b; }
+        .icon-circle { 
+            width: 40px; 
+            height: 40px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background: #f3f4f6;
+            border-radius: 50%;
+        }
+        .icon-name { font-weight: bold; color: #111827; }
+        .icon-desc { color: #6b7280; font-size: 14px; margin-top: 4px; }
+        h1 { color: #111827; }
+        .recommended { border-left: 4px solid #10b981; }
+    </style>
+</head>
+<body>
+    <h1>🚨 Dispute Icon Options</h1>
+    <div class="icon-grid">
+        
+        <div class="icon-item recommended">
+            <div class="icon-circle">
+                <i data-lucide="alert-triangle" style="color: #4b5563; width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+                <div class="icon-name">AlertTriangle</div>
+                <div class="icon-desc">⭐ RECOMMENDED - Classic warning/dispute symbol</div>
+            </div>
+        </div>
+
+        <div class="icon-item recommended">
+            <div class="icon-circle">
+                <i data-lucide="flag" style="color: #4b5563; width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+                <div class="icon-name">Flag</div>
+                <div class="icon-desc">⭐ RECOMMENDED - Universally recognized for reporting</div>
+            </div>
+        </div>
+
+        <div class="icon-item">
+            <div class="icon-circle">
+                <i data-lucide="message-square-warning" style="color: #4b5563; width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+                <div class="icon-name">MessageSquareWarning</div>
+                <div class="icon-desc">Message bubble with warning - good for content disputes</div>
+            </div>
+        </div>
+
+        <div class="icon-item">
+            <div class="icon-circle">
+                <i data-lucide="shield-alert" style="color: #4b5563; width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+                <div class="icon-name">ShieldAlert</div>
+                <div class="icon-desc">Security/protection alert - emphasizes safety</div>
+            </div>
+        </div>
+
+        <div class="icon-item">
+            <div class="icon-circle">
+                <i data-lucide="triangle-alert" style="color: #4b5563; width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+                <div class="icon-name">TriangleAlert</div>
+                <div class="icon-desc">Alternative warning triangle</div>
+            </div>
+        </div>
+
+        <div class="icon-item current">
+            <div class="icon-circle">
+                <i data-lucide="eye" style="color: #4b5563; width: 18px; height: 18px;"></i>
+            </div>
+            <div>
+                <div class="icon-name">Eye (current)</div>
+                <div class="icon-desc">Currently used - but implies viewing, not disputing</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
