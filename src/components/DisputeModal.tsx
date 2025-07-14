@@ -159,7 +159,7 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
               <div className="text-sm text-gray-700 mb-2">
                 Choose visibility of your identity (your name & profile picture):
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-between">
                 <div className="flex-grow">
                   <div className="relative">
                     <button
