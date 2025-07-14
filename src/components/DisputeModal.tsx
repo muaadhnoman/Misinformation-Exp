@@ -206,12 +206,14 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
               </div>
             </div>
 
-            <button
-              onClick={handleSubmit}
-             className="px-8 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium text-sm mt-6 whitespace-nowrap"
-            >
-              Submit Dispute
-            </button>
+            <div className="flex items-end">
+              <button
+                onClick={handleSubmit}
+                className="px-8 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium text-sm whitespace-nowrap"
+              >
+                Submit Dispute
+              </button>
+            </div>
           </div>
         </div>
 
