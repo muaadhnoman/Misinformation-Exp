@@ -149,7 +149,7 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            rows={4}
+            rows={2}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-4 resize-none"
             placeholder="Explain why you're disputing this post..."
           />
