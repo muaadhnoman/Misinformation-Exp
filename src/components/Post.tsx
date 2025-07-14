@@ -9,6 +9,7 @@ import PostOptionsDropdown from './PostOptionsDropdown';
 import ReportModal from './ReportModal';
 import ScamReportModal from './ScamReportModal';
 import ReportSuccessModal from './ReportSuccessModal';
+import { saveSettings, loadSettings, PostSettings, savePostData, loadPostData, PostData } from '../services/settingsService';
 
 interface PostProps {
   initialLikes?: number;
@@ -16,6 +17,7 @@ interface PostProps {
   initialShares?: number;
   initialViews?: number;
   initialDisputes?: number;
+  postId?: string;
 }
 
 const Post: React.FC<PostProps> = ({
@@ -23,7 +25,8 @@ const Post: React.FC<PostProps> = ({
   initialComments = 213,
   initialShares = 213,
   initialViews = 913,
-  initialDisputes = 19
+  initialDisputes = 19,
+  postId = `post-${Date.now()}`
 }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(initialLikes);
@@ -45,7 +48,7 @@ const Post: React.FC<PostProps> = ({
   const [isReportSuccessModalOpen, setIsReportSuccessModalOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<Array<{ id: number; text: string; author: string; time: string; initial: string }>>([]);
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<PostSettings>({
     blurCounts: true,
     autoIncrement: false,
     showDisputeGauge: false,
@@ -60,6 +63,91 @@ const Post: React.FC<PostProps> = ({
   const [autoIncrementInterval, setAutoIncrementInterval] = useState<NodeJS.Timeout | null>(null);
 
   const disputePercentage = Math.round((disputeCount / viewCount) * 100) || 0;
+
+  useEffect(() => {
+    const loadPostDataFromDB = async () => {
+      try {
+        const data = await loadPostData(postId);
+        setPostText(data.postText);
+        setPostImage(data.postImage);
+        setViewCount(data.viewCount);
+        setDisputeCount(data.disputeCount);
+        setProfileInitial(data.profileInitial);
+        setProfileName(data.profileName);
+        setProfileTime(data.profileTime);
+        setSettings(data.settings);
+      } catch (error) {
+        console.error('Error loading post data:', error);
+      }
+    };
+    
+    loadPostDataFromDB();
+  }, [postId]);
+
+  const saveAllPostData = async () => {
+    try {
+      const postData: PostData = {
+        postText,
+        postImage,
+        viewCount,
+        disputeCount,
+        profileInitial,
+        profileName,
+        profileTime,
+        settings
+      };
+      await savePostData(postId, postData);
+    } catch (error) {
+      console.error('Error saving post data:', error);
+    }
+  };
+
+  const handleAllDataChange = async (
+    newPostText: string,
+    newPostImage: string | null,
+    newViewCount: number,
+    newDisputeCount: number,
+    newProfileInitial: string,
+    newProfileName: string,
+    newProfileTime: string,
+    newSettings: PostSettings
+  ) => {
+    setPostText(newPostText);
+    setPostImage(newPostImage);
+    setViewCount(newViewCount);
+    setDisputeCount(newDisputeCount);
+    setProfileInitial(newProfileInitial);
+    setProfileName(newProfileName);
+    setProfileTime(newProfileTime);
+    setSettings(newSettings);
+    
+    const postData: PostData = {
+      postText: newPostText,
+      postImage: newPostImage,
+      viewCount: newViewCount,
+      disputeCount: newDisputeCount,
+      profileInitial: newProfileInitial,
+      profileName: newProfileName,
+      profileTime: newProfileTime,
+      settings: newSettings
+    };
+    await savePostData(postId, postData);
+  };
+
+  const handleSettingsChange = async (newSettings: PostSettings) => {
+    setSettings(newSettings);
+    const postData: PostData = {
+      postText,
+      postImage,
+      viewCount,
+      disputeCount,
+      profileInitial,
+      profileName,
+      profileTime,
+      settings: newSettings
+    };
+    await savePostData(postId, postData);
+  };
 
   useEffect(() => {
     if (settings.autoIncrement && !autoIncrementInterval) {
@@ -268,7 +356,7 @@ const Post: React.FC<PostProps> = ({
               onClick={() => setIsDisputeModalOpen(true)}
               className="flex items-center justify-center py-2 px-4 rounded-md hover:bg-gray-50 transition-colors text-gray-600 text-sm font-medium flex-1 mx-1"
             >
-              <AlertTriangle className="w-4 h-4 mr-2 text-yellow-500" />
+              <AlertTriangle className="w-4 h-4 mr-2 text-red-500" />
               Dispute
             </button>
           )}
@@ -352,21 +440,14 @@ const Post: React.FC<PostProps> = ({
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         postText={postText}
-        setPostText={setPostText}
         postImage={postImage}
-        setPostImage={setPostImage}
         viewCount={viewCount}
-        setViewCount={setViewCount}
         disputeCount={disputeCount}
-        setDisputeCount={setDisputeCount}
         profileInitial={profileInitial}
-        setProfileInitial={setProfileInitial}
         profileName={profileName}
-        setProfileName={setProfileName}
         profileTime={profileTime}
-        setProfileTime={setProfileTime}
         settings={settings}
-        setSettings={setSettings}
+        onSave={handleAllDataChange}
       />
 
       <DisputeModal
