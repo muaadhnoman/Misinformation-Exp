@@ -240,7 +240,7 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
             </div>
           </div>
 
-          <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
+          <div className="flex items-end mt-4">
             {filteredDisputes.length > 0 ? (
               filteredDisputes.map(renderDispute)
             ) : (
