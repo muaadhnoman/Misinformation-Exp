@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ThumbsUp, MessageCircle, Share2, AlertTriangle, Edit3, MoreHorizontal, Globe, User, Shield, Camera, Upload, X, Check, Eye, ChevronDown, Info } from 'lucide-react';
+import { ThumbsUp, MessageCircle, Share2, AlertTriangle, Edit3, MoreHorizontal, Globe, User, Shield, Camera, Upload, X, Check, Eye, ChevronDown, Info, Send } from 'lucide-react';
 import EditPostModal from './EditPostModal';
 import DisputeModal from './DisputeModal';
 import ViewDisputesModal from './ViewDisputesModal';
@@ -401,7 +401,7 @@ const Post: React.FC<PostProps> = ({
                   onClick={handleComment}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Send className="w-4 h-4" />
                 </button>
               </div>
             </div>
