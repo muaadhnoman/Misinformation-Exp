@@ -41,16 +41,16 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
     },
     {
       id: 2,
-      name: 'Anonymous User',
-      initial: 'A',
+      name: 'Sarah Williams',
+      initial: 'S',
       visibility: 'private',
       reason: 'I believe this is false',
       time: '2 days ago'
     },
     {
       id: 3,
-      name: 'Anonymous User',
-      initial: 'A',
+      name: 'Michael Brown',
+      initial: 'M',
       visibility: 'platform',
       reason: 'This needs to be reviewed',
       time: '3 days ago'
@@ -110,13 +110,13 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
       <div key={dispute.id} className="p-3 border-b border-gray-100 last:border-b-0">
         <div className="flex items-start space-x-3">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
-            shouldBlur ? 'bg-gray-400' : 'bg-blue-500'
+            shouldBlur ? 'bg-gray-400 blur-sm' : 'bg-blue-500'
           }`}>
             {shouldBlur ? '?' : dispute.initial}
           </div>
           <div className="flex-grow">
             <div className="flex items-center space-x-2 mb-1">
-              <span className={`font-medium text-sm ${shouldBlur ? 'text-gray-500' : 'text-gray-900'}`}>
+              <span className={`font-medium text-sm ${shouldBlur ? 'text-gray-500 blur-sm' : 'text-gray-900'}`}>
                 {shouldShowAnonymous 
                   ? `${dispute.name} (${dispute.visibility === 'private' ? 'Anonymous to others' : 'Visible to moderators'})`
                   : dispute.name
