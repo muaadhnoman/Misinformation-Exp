@@ -1,46 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Upload, Camera } from 'lucide-react';
+import { PostSettings } from '../services/settingsService';
 
 interface EditPostModalProps {
   isOpen: boolean;
   onClose: () => void;
   postText: string;
-  setPostText: (text: string) => void;
   postImage: string | null;
-  setPostImage: (image: string | null) => void;
   viewCount: number;
-  setViewCount: (count: number) => void;
   disputeCount: number;
-  setDisputeCount: (count: number) => void;
   profileInitial: string;
-  setProfileInitial: (initial: string) => void;
   profileName: string;
-  setProfileName: (name: string) => void;
   profileTime: string;
-  setProfileTime: (time: string) => void;
-  settings: any;
-  setSettings: (settings: any) => void;
+  settings: PostSettings;
+  onSave: (
+    postText: string,
+    postImage: string | null,
+    viewCount: number,
+    disputeCount: number,
+    profileInitial: string,
+    profileName: string,
+    profileTime: string,
+    settings: PostSettings
+  ) => void;
 }
 
 const EditPostModal: React.FC<EditPostModalProps> = ({
   isOpen,
   onClose,
   postText,
-  setPostText,
   postImage,
-  setPostImage,
   viewCount,
-  setViewCount,
   disputeCount,
-  setDisputeCount,
   profileInitial,
-  setProfileInitial,
   profileName,
-  setProfileName,
   profileTime,
-  setProfileTime,
   settings,
-  setSettings
+  onSave
 }) => {
   const [activeTab, setActiveTab] = useState('content');
   const [tempText, setTempText] = useState(postText);
@@ -51,6 +47,17 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
   const [tempProfileName, setTempProfileName] = useState(profileName);
   const [tempProfileTime, setTempProfileTime] = useState(profileTime);
   const [tempSettings, setTempSettings] = useState(settings);
+
+  useEffect(() => {
+    setTempText(postText);
+    setTempImage(postImage);
+    setTempViewCount(viewCount);
+    setTempDisputeCount(disputeCount);
+    setTempProfileInitial(profileInitial);
+    setTempProfileName(profileName);
+    setTempProfileTime(profileTime);
+    setTempSettings(settings);
+  }, [postText, postImage, viewCount, disputeCount, profileInitial, profileName, profileTime, settings]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -64,14 +71,16 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
   };
 
   const handleSave = () => {
-    setPostText(tempText);
-    setPostImage(tempImage);
-    setViewCount(tempViewCount);
-    setDisputeCount(tempDisputeCount);
-    setProfileInitial(tempProfileInitial);
-    setProfileName(tempProfileName);
-    setProfileTime(tempProfileTime);
-    setSettings(tempSettings);
+    onSave(
+      tempText,
+      tempImage,
+      tempViewCount,
+      tempDisputeCount,
+      tempProfileInitial,
+      tempProfileName,
+      tempProfileTime,
+      tempSettings
+    );
     onClose();
   };
 
