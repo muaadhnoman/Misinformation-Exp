@@ -373,6 +373,8 @@ const Post: React.FC<PostProps> = ({
         isOpen={isDisputeModalOpen}
         onClose={() => setIsDisputeModalOpen(false)}
         onDispute={handleDispute}
+        disputeCount={disputeCount}
+        setDisputeCount={setDisputeCount}
       />
 
       <ViewDisputesModal
