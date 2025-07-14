@@ -179,6 +179,11 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
                     {visibilityOptions.map((option) => {
                       const Icon = option.icon;
+                      const descriptions = {
+                        public: 'All users can see your identity',
+                        private: 'Only the poster can see your identity',
+                        platform: 'Only the platform moderators can see your identity'
+                      };
                       return (
                         <button
                           key={option.key}
@@ -186,10 +191,13 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
                             setSelectedVisibility(option.key);
                             setIsDropdownOpen(false);
                           }}
-                          className="w-full flex items-center px-3 py-2 text-left hover:bg-gray-50 text-sm"
+                          className="w-full flex items-center px-3 py-2 text-left hover:bg-gray-50"
                         >
-                          <Icon className="w-4 h-4 mr-2 text-blue-500" />
-                          {option.label}
+                          <Icon className="w-4 h-4 mr-3 text-blue-500 flex-shrink-0" />
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{option.label}</div>
+                            <div className="text-xs text-gray-500">{descriptions[option.key]}</div>
+                          </div>
                         </button>
                       );
                     })}
