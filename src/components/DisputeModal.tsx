@@ -95,7 +95,6 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
   const renderDispute = (dispute: Dispute) => {
     const isCurrentUser = dispute.name === 'Muaadh (You)';
     const shouldBlur = dispute.visibility !== 'public' && !isCurrentUser;
-    const shouldShowAnonymous = dispute.visibility !== 'public' && !isCurrentUser;
 
     const visibilityConfig = {
       public: { icon: Globe, color: 'text-green-600', label: 'Public' },
@@ -117,10 +116,7 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
           <div className="flex-grow">
             <div className="flex items-center space-x-2 mb-1">
               <span className={`font-medium text-sm ${shouldBlur ? 'text-gray-500 blur-sm' : 'text-gray-900'}`}>
-                {shouldShowAnonymous 
-                  ? `${dispute.name} (${dispute.visibility === 'private' ? 'Anonymous to others' : 'Visible to moderators'})`
-                  : dispute.name
-                }
+                {dispute.name}
               </span>
               <span className={`text-xs px-2 py-0.5 rounded-full flex items-center ${config.color}`}>
                 <Icon className="w-3 h-3 mr-1" />
