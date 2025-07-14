@@ -208,7 +208,7 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
 
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium text-sm mt-2"
+              className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium text-sm mt-4"
             >
               Submit Dispute
             </button>
