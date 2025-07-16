@@ -10,6 +10,7 @@ import ReportModal from './ReportModal';
 import ScamReportModal from './ScamReportModal';
 import ReportSuccessModal from './ReportSuccessModal';
 import { saveSettings, loadSettings, PostSettings, savePostData, loadPostData, PostData } from '../services/settingsService';
+import { activityTracker } from '../services/activityTrackingService';
 
 interface PostProps {
   initialLikes?: number;
@@ -82,6 +83,9 @@ const Post: React.FC<PostProps> = ({
     };
     
     loadPostDataFromDB();
+    
+    // Set current post for activity tracking
+    activityTracker.setCurrentPost(postId);
   }, [postId]);
 
   const saveAllPostData = async () => {
@@ -170,8 +174,16 @@ const Post: React.FC<PostProps> = ({
     setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
   };
 
-  const handleComment = () => {
+  const handleComment = async () => {
     if (commentText.trim()) {
+      // Track comment activity before submitting
+      await activityTracker.trackCommentSubmission(
+        postId,
+        commentText,
+        profileName,
+        postText
+      );
+
       const newComment = {
         id: Date.now(),
         text: commentText,

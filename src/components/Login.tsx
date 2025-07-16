@@ -1,20 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lock } from 'lucide-react';
+import { authService } from '../services/authService';
 
 interface LoginProps {
-  onLogin: () => void;
+  onLogin: (accessCode: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Initialize default codes on component mount
+    authService.initializeDefaultCodes();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (code === '123') {
-      onLogin();
-    } else {
-      setError('Invalid code. Please try again.');
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const isValid = await authService.validateAccessCode(code);
+      if (isValid) {
+        onLogin(code);
+      } else {
+        setError('Invalid code. Please try again.');
+      }
+    } catch (error) {
+      setError('Authentication failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,9 +67,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors font-medium"
+            disabled={isLoading}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors font-medium disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
-            Access
+            {isLoading ? 'Verifying...' : 'Access'}
           </button>
         </form>
       </div>

@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import Post from './components/Post';
 import Login from './components/Login';
 import { LogOut } from 'lucide-react';
+import { activityTracker } from './services/activityTrackingService';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentAccessCode, setCurrentAccessCode] = useState<string>('');
 
-  const handleLogin = () => {
+  const handleLogin = (accessCode: string) => {
     setIsLoggedIn(true);
+    setCurrentAccessCode(accessCode);
+    activityTracker.initializeSession(accessCode);
   };
 
   const handleLogout = () => {
