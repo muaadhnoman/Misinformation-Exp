@@ -81,7 +81,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
       tempProfileTime,
       tempSettings
     );
-    onClose();
+    // Don't call onClose() here - let the parent handle it after successful save
   };
 
   const handleCancel = () => {

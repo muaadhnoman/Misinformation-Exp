@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Plus, Minus, Bookmark, Bell, X, Clock, UserX, AlertTriangle, Shield } from 'lucide-react';
+import { Plus, Minus, Bookmark, Bell, X, Clock, UserX, AlertTriangle, Shield, Copy } from 'lucide-react';
 
 interface PostOptionsDropdownProps {
   isOpen: boolean;

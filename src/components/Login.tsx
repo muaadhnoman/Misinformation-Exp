@@ -3,7 +3,7 @@ import { Lock } from 'lucide-react';
 import { authService } from '../services/authService';
 
 interface LoginProps {
-  onLogin: (accessCode: string) => void;
+  onLogin: (accessCode: string, isAdmin: boolean) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
@@ -22,9 +22,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setError('');
 
     try {
-      const isValid = await authService.validateAccessCode(code);
-      if (isValid) {
-        onLogin(code);
+      const result = await authService.validateAccessCode(code);
+      if (result.isValid) {
+        onLogin(code, result.isAdmin);
       } else {
         setError('Invalid code. Please try again.');
       }

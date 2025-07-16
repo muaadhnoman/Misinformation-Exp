@@ -5,6 +5,7 @@ export interface AccessCode {
   id: string;
   code: string;
   isActive: boolean;
+  isAdmin: boolean;
   createdAt: Date;
   description?: string;
 }
@@ -12,8 +13,8 @@ export interface AccessCode {
 class AuthService {
   private readonly COLLECTION_NAME = 'accessCodes';
 
-  // Validate access code against Firestore
-  async validateAccessCode(code: string): Promise<boolean> {
+  // Validate access code and return user info
+  async validateAccessCode(code: string): Promise<{ isValid: boolean; isAdmin: boolean }> {
     try {
       const q = query(
         collection(db, this.COLLECTION_NAME),
@@ -22,10 +23,18 @@ class AuthService {
       );
       
       const querySnapshot = await getDocs(q);
-      return !querySnapshot.empty;
+      if (querySnapshot.empty) {
+        return { isValid: false, isAdmin: false };
+      }
+      
+      const userData = querySnapshot.docs[0].data();
+      return { 
+        isValid: true, 
+        isAdmin: userData.isAdmin || false 
+      };
     } catch (error) {
       console.error('Error validating access code:', error);
-      return false;
+      return { isValid: false, isAdmin: false };
     }
   }
 
@@ -45,11 +54,12 @@ class AuthService {
   }
 
   // Add new access code (admin function)
-  async addAccessCode(code: string, description?: string): Promise<boolean> {
+  async addAccessCode(code: string, isAdmin: boolean = false, description?: string): Promise<boolean> {
     try {
       await addDoc(collection(db, this.COLLECTION_NAME), {
         code,
         isActive: true,
+        isAdmin,
         createdAt: new Date(),
         description: description || ''
       });
@@ -76,7 +86,8 @@ class AuthService {
     try {
       const codes = await this.getAllAccessCodes();
       if (codes.length === 0) {
-        await this.addAccessCode('123', 'Default access code');
+        await this.addAccessCode('123', false, 'Default user access code');
+        await this.addAccessCode('admin', true, 'Admin access code');
         console.log('Initialized default access codes');
       }
     } catch (error) {

@@ -9,8 +9,9 @@ import PostOptionsDropdown from './PostOptionsDropdown';
 import ReportModal from './ReportModal';
 import ScamReportModal from './ScamReportModal';
 import ReportSuccessModal from './ReportSuccessModal';
-import { saveSettings, loadSettings, PostSettings, savePostData, loadPostData, PostData } from '../services/settingsService';
+import { saveSettings, loadSettings, PostSettings } from '../services/settingsService';
 import { activityTracker } from '../services/activityTrackingService';
+import { PostData, postsService } from '../services/postsService';
 
 interface PostProps {
   initialLikes?: number;
@@ -18,7 +19,9 @@ interface PostProps {
   initialShares?: number;
   initialViews?: number;
   initialDisputes?: number;
-  postId?: string;
+  postId: string;
+  postData?: PostData;
+  isAdmin?: boolean;
 }
 
 const Post: React.FC<PostProps> = ({
@@ -27,19 +30,21 @@ const Post: React.FC<PostProps> = ({
   initialShares = 213,
   initialViews = 913,
   initialDisputes = 19,
-  postId = `post-${Date.now()}`
+  postId,
+  postData,
+  isAdmin = false
 }) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(initialLikes);
-  const [commentCount, setCommentCount] = useState(initialComments);
-  const [shareCount, setShareCount] = useState(initialShares);
-  const [viewCount, setViewCount] = useState(initialViews);
-  const [disputeCount, setDisputeCount] = useState(initialDisputes);
-  const [postText, setPostText] = useState("Just sharing some thoughts on this beautiful day! What's everyone up to?");
-  const [profileInitial, setProfileInitial] = useState('S');
-  const [profileName, setProfileName] = useState('Sam Ahmed');
-  const [profileTime, setProfileTime] = useState('2h');
-  const [postImage, setPostImage] = useState<string | null>(null);
+  const [likeCount, setLikeCount] = useState(postData?.likeCount || initialLikes);
+  const [commentCount, setCommentCount] = useState(postData?.commentCount || initialComments);
+  const [shareCount, setShareCount] = useState(postData?.shareCount || initialShares);
+  const [viewCount, setViewCount] = useState(postData?.viewCount || initialViews);
+  const [disputeCount, setDisputeCount] = useState(postData?.disputeCount || initialDisputes);
+  const [postText, setPostText] = useState(postData?.postText || "Just sharing some thoughts on this beautiful day! What's everyone up to?");
+  const [profileInitial, setProfileInitial] = useState(postData?.profileInitial || 'S');
+  const [profileName, setProfileName] = useState(postData?.profileName || 'Sam Ahmed');
+  const [profileTime, setProfileTime] = useState(postData?.profileTime || '2h');
+  const [postImage, setPostImage] = useState<string | null>(postData?.postImage || null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDisputeModalOpen, setIsDisputeModalOpen] = useState(false);
   const [isViewDisputesModalOpen, setIsViewDisputesModalOpen] = useState(false);
@@ -48,8 +53,8 @@ const Post: React.FC<PostProps> = ({
   const [isScamReportModalOpen, setIsScamReportModalOpen] = useState(false);
   const [isReportSuccessModalOpen, setIsReportSuccessModalOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState<Array<{ id: number; text: string; author: string; time: string; initial: string }>>([]);
-  const [settings, setSettings] = useState<PostSettings>({
+  const [comments, setComments] = useState<Array<{ id: number; text: string; author: string; time: string; initial: string }>>(postData?.comments || []);
+  const [settings, setSettings] = useState<PostSettings>(postData?.settings || {
     blurCounts: true,
     autoIncrement: false,
     showDisputeGauge: false,
@@ -66,31 +71,13 @@ const Post: React.FC<PostProps> = ({
   const disputePercentage = Math.round((disputeCount / viewCount) * 100) || 0;
 
   useEffect(() => {
-    const loadPostDataFromDB = async () => {
-      try {
-        const data = await loadPostData(postId);
-        setPostText(data.postText);
-        setPostImage(data.postImage);
-        setViewCount(data.viewCount);
-        setDisputeCount(data.disputeCount);
-        setProfileInitial(data.profileInitial);
-        setProfileName(data.profileName);
-        setProfileTime(data.profileTime);
-        setSettings(data.settings);
-      } catch (error) {
-        console.error('Error loading post data:', error);
-      }
-    };
-    
-    loadPostDataFromDB();
-    
     // Set current post for activity tracking
     activityTracker.setCurrentPost(postId);
   }, [postId]);
 
   const saveAllPostData = async () => {
     try {
-      const postData: PostData = {
+      const postData: Partial<PostData> = {
         postText,
         postImage,
         viewCount,
@@ -100,7 +87,7 @@ const Post: React.FC<PostProps> = ({
         profileTime,
         settings
       };
-      await savePostData(postId, postData);
+      await postsService.updatePost(postId, postData);
     } catch (error) {
       console.error('Error saving post data:', error);
     }
@@ -116,41 +103,41 @@ const Post: React.FC<PostProps> = ({
     newProfileTime: string,
     newSettings: PostSettings
   ) => {
-    setPostText(newPostText);
-    setPostImage(newPostImage);
-    setViewCount(newViewCount);
-    setDisputeCount(newDisputeCount);
-    setProfileInitial(newProfileInitial);
-    setProfileName(newProfileName);
-    setProfileTime(newProfileTime);
-    setSettings(newSettings);
-    
-    const postData: PostData = {
-      postText: newPostText,
-      postImage: newPostImage,
-      viewCount: newViewCount,
-      disputeCount: newDisputeCount,
-      profileInitial: newProfileInitial,
-      profileName: newProfileName,
-      profileTime: newProfileTime,
-      settings: newSettings
-    };
-    await savePostData(postId, postData);
+    try {
+      setPostText(newPostText);
+      setPostImage(newPostImage);
+      setViewCount(newViewCount);
+      setDisputeCount(newDisputeCount);
+      setProfileInitial(newProfileInitial);
+      setProfileName(newProfileName);
+      setProfileTime(newProfileTime);
+      setSettings(newSettings);
+      
+      const postData: Partial<PostData> = {
+        postText: newPostText,
+        postImage: newPostImage,
+        viewCount: newViewCount,
+        disputeCount: newDisputeCount,
+        profileInitial: newProfileInitial,
+        profileName: newProfileName,
+        profileTime: newProfileTime,
+        settings: newSettings
+      };
+      await postsService.updatePost(postId, postData);
+      
+      // Close the edit modal after successful save
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error('Error updating post:', error);
+    }
   };
 
   const handleSettingsChange = async (newSettings: PostSettings) => {
     setSettings(newSettings);
-    const postData: PostData = {
-      postText,
-      postImage,
-      viewCount,
-      disputeCount,
-      profileInitial,
-      profileName,
-      profileTime,
+    const postData: Partial<PostData> = {
       settings: newSettings
     };
-    await savePostData(postId, postData);
+    await postsService.updatePost(postId, postData);
   };
 
   useEffect(() => {
@@ -240,12 +227,14 @@ const Post: React.FC<PostProps> = ({
             </div>
           </div>
           <div className="flex items-center space-x-1">
-            <button 
-              onClick={() => setIsEditModalOpen(true)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <Edit3 className="w-4 h-4 text-white" />
-            </button>
+            {isAdmin && (
+              <button 
+                onClick={() => setIsEditModalOpen(true)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-white" />
+              </button>
+            )}
             <button 
               onClick={() => setIsOptionsDropdownOpen(true)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -263,37 +252,41 @@ const Post: React.FC<PostProps> = ({
         {/* Post Image */}
         <div className="relative">
           {postImage ? (
-            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+            <div className={`relative ${isAdmin ? 'group cursor-pointer' : ''}`} onClick={isAdmin ? () => fileInputRef.current?.click() : undefined}>
               <img 
                 src={postImage} 
                 alt="Post content" 
                 className="w-full max-h-[500px] object-contain bg-gray-50"
               />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-center">
-                  <Camera className="w-8 h-8 mx-auto mb-2" />
-                  <span className="text-sm font-medium">Click to change image</span>
+              {isAdmin && (
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-center">
+                    <Camera className="w-8 h-8 mx-auto mb-2" />
+                    <span className="text-sm font-medium">Click to change image</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             <div 
-              className="bg-gradient-to-br from-blue-50 to-indigo-50 h-48 flex items-center justify-center cursor-pointer group hover:from-blue-100 hover:to-indigo-100 transition-all duration-300"
-              onClick={() => fileInputRef.current?.click()}
+              className={`bg-gradient-to-br from-blue-50 to-indigo-50 h-48 flex items-center justify-center ${isAdmin ? 'cursor-pointer group hover:from-blue-100 hover:to-indigo-100' : ''} transition-all duration-300`}
+              onClick={isAdmin ? () => fileInputRef.current?.click() : undefined}
             >
-              <div className="text-center text-blue-400 group-hover:text-blue-500 transition-colors">
+              <div className={`text-center text-blue-400 ${isAdmin ? 'group-hover:text-blue-500' : ''} transition-colors`}>
                 <Camera className="w-12 h-12 mx-auto mb-2" />
-                <span className="text-sm font-medium">Click to add image</span>
+                <span className="text-sm font-medium">{isAdmin ? 'Click to add image' : 'No image'}</span>
               </div>
             </div>
           )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
+          {isAdmin && (
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+          )}
         </div>
 
         {/* Engagement Stats */}
@@ -448,19 +441,22 @@ const Post: React.FC<PostProps> = ({
       </div>
 
       {/* Modals */}
-      <EditPostModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        postText={postText}
-        postImage={postImage}
-        viewCount={viewCount}
-        disputeCount={disputeCount}
-        profileInitial={profileInitial}
-        profileName={profileName}
-        profileTime={profileTime}
-        settings={settings}
-        onSave={handleAllDataChange}
-      />
+      {isAdmin && (
+        <EditPostModal
+          key={isEditModalOpen ? 'edit-open' : 'edit-closed'}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          postText={postText}
+          postImage={postImage}
+          viewCount={viewCount}
+          disputeCount={disputeCount}
+          profileInitial={profileInitial}
+          profileName={profileName}
+          profileTime={profileTime}
+          settings={settings}
+          onSave={handleAllDataChange}
+        />
+      )}
 
       <DisputeModal
         isOpen={isDisputeModalOpen}
