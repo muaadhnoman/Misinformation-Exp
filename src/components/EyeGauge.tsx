@@ -49,7 +49,7 @@ const EyeGauge: React.FC<EyeGaugeProps> = ({ viewCount, disputeCount }) => {
           
           {/* Tooltip */}
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-30">
-            {disputePercentage}% of viewers reported this post as misinformation
+            {disputeCount} out of {viewCount} viewers ({disputePercentage}%) reported this post as misinformation
           </div>
         </div>
         

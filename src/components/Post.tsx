@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ThumbsUp, MessageCircle, Share2, AlertTriangle, Edit3, MoreHorizontal, Globe, User, Shield, Camera, Upload, X, Check, Eye, ChevronDown, Info, Send } from 'lucide-react';
+import { ThumbsUp, MessageCircle, Share2, AlertTriangle, Edit3, MoreHorizontal, Globe, User, Shield, Camera, Upload, X, Check, Eye, ChevronDown, Info, Send, MessageCircleWarning } from 'lucide-react';
 import EditPostModal from './EditPostModal';
 import DisputeModal from './DisputeModal';
 import ViewDisputesModal from './ViewDisputesModal';
@@ -361,7 +361,7 @@ const Post: React.FC<PostProps> = ({
               onClick={() => setIsDisputeModalOpen(true)}
               className="flex items-center justify-center py-2 px-4 rounded-md hover:bg-gray-50 transition-colors text-gray-600 text-sm font-medium flex-1 mx-1"
             >
-              <AlertTriangle className="w-4 h-4 mr-2 text-red-500" />
+              <MessageCircleWarning className="w-4 h-4 mr-2" style={{color: '#B7410E'}} />
               Dispute
             </button>
           )}
@@ -379,7 +379,7 @@ const Post: React.FC<PostProps> = ({
                   : 'border-red-200 text-red-500 hover:bg-red-50'
               }`}
             >
-              {hasDisputed ? <Check className="w-4 h-4 mr-2" /> : <AlertTriangle className="w-4 h-4 mr-2" />}
+              {hasDisputed ? <Check className="w-4 h-4 mr-2" /> : <MessageCircleWarning className="w-4 h-4 mr-2" style={{color: '#B7410E'}} />}
               {hasDisputed ? 'Disputed' : 'Dispute this post'}
             </button>
           </div>

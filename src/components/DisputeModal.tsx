@@ -144,7 +144,7 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
 
         {/* Dispute Submission Form */}
         <div className="p-4 bg-red-50 border-b border-red-200">
-          <h3 className="text-lg font-semibold text-red-700 mb-4">Submit your dispute:</h3>
+          <h3 className="text-lg font-semibold mb-4" style={{color: '#B7410E'}}>Submit your dispute:</h3>
           
           <textarea
             value={reason}
@@ -206,7 +206,8 @@ const DisputeModal: React.FC<DisputeModalProps> = ({
             </div>
             <button
               onClick={handleSubmit}
-              className="ml-8 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium text-sm whitespace-nowrap mt-7"
+              className="ml-8 px-6 py-2 text-white rounded-lg hover:opacity-90 transition-colors font-medium text-sm whitespace-nowrap mt-7"
+              style={{backgroundColor: '#B7410E'}}
             >
               Submit Dispute
             </button>
